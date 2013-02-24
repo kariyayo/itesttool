@@ -1,16 +1,16 @@
 require './lib/itesttools'
 
 describe "Access to /index" do
-  _when  { @res = get "http://localhost:4567/index" }
-
-  _then  { @res.should be_status "200" }
-  _and   { @res.body.should eq "Hello world!" }
+  _when get "http://localhost:4567/index" do
+    its(:code) { should eq "200" }
+    its(:body) { should eq "Hello world!" }
+  end
 end
 
 describe "Access to /index.json" do
-  _when  { @res = get "http://localhost:4567/index.json" }
-
-  _then  { @res.should be_status "200" }
-  _and   { @res.body.should eq_schema_of "json_schema.json" }
+  _when get "http://localhost:4567/index.json" do
+    its(:code) { should eq "200" }
+    its(:body) { should eq_schema_of "json_schema.json" }
+  end
 end
 

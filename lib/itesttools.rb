@@ -7,20 +7,8 @@ def _given(&block)
   before(:all, &block)
 end
 
-def _more(&block)
-  before(:all, &block)
-end
-
-def _when(&block)
-  before(:all, &block)
-end
-
-def _then(description = nil, &block)
-  it(description, &block)
-end
-
-def _and(description = nil, &block)
-  _then(description, &block)
+def _when(obj, &block)
+  context(obj, &block)
 end
 
 def get(url)
