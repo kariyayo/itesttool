@@ -1,5 +1,7 @@
+require 'rubygems'
 require 'net/http'
 require 'uri'
+require 'json-schema'
 
 def _given(&block)
   before(:all, &block)
@@ -34,10 +36,32 @@ RSpec::Matchers.define :be_status do |expectation|
     res.code == expectation
   end
   failure_message_for_should do |res|
-    "\nstatus code is not match.\nexpected: \"#{expectation}\"\n     got: \"#{res.code}\"\n\n"
+    "\nStatus code is not match.\nexpected: \"#{expectation}\"\n     got: \"#{res.code}\"\n\n"
   end
   failure_message_for_should_not do |res|
-    "\nstatus code is match.\nexpected: \"#{expectation}\"\n     got: \"#{res.code}\"\n\n"
+    "\nStatus code is match.\nexpected: \"#{expectation}\"\n     got: \"#{res.code}\"\n\n"
+  end
+end
+
+RSpec::Matchers.define :eq_schema_of do |schema_file|
+  match do |body|
+    @msg = ""
+    begin
+      JSON::Validator.validate!(schema_file, body)
+      true
+    rescue JSON::Schema::ValidationError
+      @msg = $!.message
+      false
+    end
+  end
+  failure_message_for_should do |body|
+    "\nInvalid response body on \"#{schema_file}\".\n" +
+      @msg +"\n\n" +
+      "Body is\n====================\n" + body + "\n\n" +
+      "#{schema_file} is\n====================\n" + File.open(schema_file).read + "\n\n"
+  end
+  failure_message_for_should_not do |body|
+    "\nValid response body on \"#{schema_file}\".\n\n"
   end
 end
 
