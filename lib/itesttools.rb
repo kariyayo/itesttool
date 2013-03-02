@@ -19,6 +19,14 @@ def get(url)
   res
 end
 
+def status_check(code = "200", urls)
+  urls.each do |url|
+    it "code should eq " + code.to_s do
+      (get url).code.should eq code.to_s
+    end
+  end
+end
+
 RSpec::Matchers.define :be_status do |expectation|
   match do |res|
     res.code == expectation
