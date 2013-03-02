@@ -10,7 +10,7 @@ end
 describe "Access to /index.json" do
   _when get "http://localhost:4567/index.json" do
     its(:code) { should eq "200" }
-    its(:body) { should eq_schema_of "json_schema.json" }
+    its(:body) { should eq_schema_of "json_schema/hello.json" }
   end
 end
 
