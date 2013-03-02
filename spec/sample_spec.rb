@@ -1,4 +1,4 @@
-require './lib/itesttools'
+require './lib/itesttool'
 
 describe "Access to /index" do
   _when get "http://localhost:4567/index" do
