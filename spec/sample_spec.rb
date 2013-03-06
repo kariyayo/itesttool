@@ -11,6 +11,10 @@ describe "Access to /index.json" do
   _when get "http://localhost:4567/index.json" do
     its("code") { should eq "200" }
     its("body") { should eq_schema_of "json_schema/hello.json" }
+    its("body_as_json") {
+      should include "name" => "Taro"
+      should include "msg" => "Hello world!"
+    }
   end
 end
 

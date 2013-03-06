@@ -5,5 +5,5 @@ get '/index' do
 end
 
 get '/index.json' do
-  '{ "msg": "Hello world!"}'
+  '{ "name": "Taro", "msg": "Hello world!"}'
 end

@@ -16,6 +16,11 @@ def get(url)
   res = Net::HTTP.start(url.host, url.port) {|http|
       http.get(url.path)
   }
+  class << res
+    def body_as_json
+      JSON.parse body
+    end
+  end
   res
 end
 
