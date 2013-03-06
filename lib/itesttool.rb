@@ -37,18 +37,6 @@ def status_check(code = "200", urls)
   end
 end
 
-RSpec::Matchers.define :be_status do |expectation|
-  match do |res|
-    res.code == expectation
-  end
-  failure_message_for_should do |res|
-    "\nStatus code is not match.\nexpected: \"#{expectation}\"\n     got: \"#{res.code}\"\n\n"
-  end
-  failure_message_for_should_not do |res|
-    "\nStatus code is match.\nexpected: \"#{expectation}\"\n     got: \"#{res.code}\"\n\n"
-  end
-end
-
 RSpec::Matchers.define :eq_schema_of do |schema_file|
   match do |body|
     @msg = ""
