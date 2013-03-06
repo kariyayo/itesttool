@@ -12,22 +12,27 @@ def _when(obj, &block)
 end
 
 def get(url)
-  url = URI.parse(url)
-  res = Net::HTTP.start(url.host, url.port) {|http|
-      http.get(url.path)
+  url_obj = URI.parse(url)
+  res = Net::HTTP.start(url_obj.host, url_obj.port) {|http|
+      http.get(url_obj.path)
   }
   class << res
+    attr_accessor :url
     def body_as_json
       JSON.parse body
     end
+    def to_s
+      "GET " + url
+    end
   end
+  res.url = url
   res
 end
 
 def status_check(code = "200", urls)
   urls.each do |url|
-    it "code should eq " + code.to_s do
-      (get url).code.should eq code.to_s
+    context get url do
+      its(:code) { should eq code.to_s }
     end
   end
 end
