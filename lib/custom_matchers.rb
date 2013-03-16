@@ -36,7 +36,7 @@ MSG
 end
 
 
-RSpec::Matchers.define :be_type_of do |type|
+RSpec::Matchers.define :all_be_type_of do |type|
   match do |list|
     if type == Object
       false

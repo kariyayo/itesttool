@@ -22,8 +22,8 @@ describe "Access to /index.json" do
     its(["$.members[::]"]) { should have(3).items }
     its(["$.members[::]"]) { should have_at_most(3).items }
     its(["$.members[::]"]) { should have_at_least(1).items }
-    its(["$.members..name"]) { should be_type_of String }
-    its(["$.members..age"]) { should be_type_of Integer }
+    its(["$.members..name"]) { should all_be_type_of String }
+    its(["$.members..age"]) { should all_be_type_of Integer }
   end
 end
 
