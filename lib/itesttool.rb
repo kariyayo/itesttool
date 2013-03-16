@@ -21,9 +21,6 @@ def get(url)
   }
   class << res
     attr_accessor :url
-    def body_as_json
-      JSON.parse body
-    end
     def [](path)
       JsonPath.on(body, path)
     end
