@@ -28,6 +28,7 @@ describe "Access to /index.json" do
     its(["$.members..age"]) { should all_be_gt_eq 12 }
     its(["$.members..age"]) { should all_be_lt 33 }
     its(["$.members..age"]) { should all_be_lt_eq 32 }
+    its(["$.members..age"]) { should be_sorted :desc }
   end
 end
 

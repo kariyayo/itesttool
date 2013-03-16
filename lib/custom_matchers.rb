@@ -220,3 +220,48 @@ class AllBeLtEq
   end
 end
 
+
+def be_sorted(order)
+  BeSorted.new(order)
+end
+
+class BeSorted
+  include CollectionMatchUtil
+  def initialize(order)
+    @order = order
+  end
+  def matches?(list)
+    @list = list
+    type = list.first.class
+    unless list.all?{|x| x.class == type }
+      @not_aligned = true
+      false
+    else
+      sorted_list = list.sort
+      if @order == :asc
+        list == sorted_list
+      elsif @order == :desc
+        list == sorted_list.reverse
+      else
+        @order_invalid = true
+        false
+      end
+    end
+  end
+
+  def failure_message_for_should
+    if @not_aligned
+      msg_of_type_not_aligned
+    elsif @order_invalid
+      msg_of_type_invalid
+    else
+      "expected #{@list} to be sorted #{@order}"
+    end
+  end
+
+private
+  def msg_of_type_invalid
+    "specified order is invalid. valid order in [:asc, :desc]"
+  end
+end
+
