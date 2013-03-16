@@ -22,9 +22,10 @@ describe "Access to /index.json" do
     its(["$.members[::]"]) { should have(3).items }
     its(["$.members[::]"]) { should have_at_most(3).items }
     its(["$.members[::]"]) { should have_at_least(1).items }
-    its(["$.members..name"]) { should all_be_type_of String }
-    its(["$.members..age"]) { should all_be_type_of Integer }
-    its(["$.members..age"]) { should all_be_gt 10 }
+    its(["$.members..name"]) { should all_be_type_of :string }
+    its(["$.members..age"]) { should all_be_type_of :integer }
+    its(["$.members..age"]) { should all_be_gt 11 }
+    its(["$.members..age"]) { should all_be_gt_eq 12 }
   end
 end
 
