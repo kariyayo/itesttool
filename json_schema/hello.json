@@ -1,6 +1,16 @@
 {
   "type": "object",
   "properties": {
-    "msg": {"type": "string", "required": true}
+    "team": {"type": "string", "required": true},
+    "members": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {"type": "string", "required": true},
+          "age":  {"type": "integer", "required": true}
+        }
+      }
+    }
   }
 }

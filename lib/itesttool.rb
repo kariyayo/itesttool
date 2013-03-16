@@ -2,6 +2,7 @@ require 'rubygems'
 require 'net/http'
 require 'uri'
 require 'json-schema'
+require 'jsonpath'
 
 def _given(&block)
   before(:all, &block)
@@ -21,10 +22,14 @@ def get(url)
     def body_as_json
       JSON.parse body
     end
+    def [](path)
+      JsonPath.on(body, path)
+    end
     def to_s
       "GET " + url
     end
   end
+
   res.url = url
   res
 end

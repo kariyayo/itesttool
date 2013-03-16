@@ -5,5 +5,14 @@ get '/index' do
 end
 
 get '/index.json' do
-  '{ "name": "Taro", "msg": "Hello world!"}'
+  <<-JSON
+  {
+    "team": "ABC",
+    "members": [
+      {"name": "Ichiro", "age": 32},
+      {"name": "Jiro",   "age": 22},
+      {"name": "Saburo", "age": 12}
+    ]
+  }
+  JSON
 end
