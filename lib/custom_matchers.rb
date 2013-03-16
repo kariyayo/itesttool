@@ -1,61 +1,9 @@
 require 'rubygems'
 require 'json-schema'
 
-module CollectionMatchUtil
-  def element_matches?(list, &p)
-    @list = list
-    @not_aligned = false
-    type = list.first.class
-    unless list.all?{|x| x.class == type }
-      @not_aligned = true
-      false
-    else
-      @mismatch_indexes = list.each.with_index.find_all{|x, i| !(p.call(x)) }.map{|x, i| i}
-      @mismatch_indexes.size == 0
-    end
-  end
-
-  def failure_message_for_should
-    if @not_aligned
-      msg_of_type_not_aligned
-    else
-<<"MSG"
-#{msg_of_base_for_should}
-#{msg_of_mismatch_indexes}
-MSG
-    end
-  end
-
-  def failure_message_for_should_not
-    @not_aligned ? msg_of_type_not_aligned : msg_of_base_for_should
-  end
-
-  def msg_of_mismatch_indexes
-    "mismatch indexes is #{@mismatch_indexes}"
-  end
-
-  def msg_of_type_not_aligned
-    "expected #{@list} type is not available."
-  end
-end
-
-
 def eq_schema_of(schema_file)
   EqSchemaOf.new(schema_file)
 end
-
-def all_be_type_of(type)
-  AllBeTypeOf.new(type)
-end
-
-def all_be_gt(min)
-  AllBeGt.new(min)
-end
-
-def all_be_gt_eq(min)
-  AllBeGtEq.new(min)
-end
-
 
 class EqSchemaOf
   def initialize(schema_file)
@@ -96,6 +44,9 @@ MSG
 end
 
 
+def all_be_type_of(type)
+  AllBeTypeOf.new(type)
+end
 
 class AllBeTypeOf
   def initialize(type)
@@ -147,6 +98,49 @@ private
 end
 
 
+module CollectionMatchUtil
+  def element_matches?(list, &p)
+    @list = list
+    @not_aligned = false
+    type = list.first.class
+    unless list.all?{|x| x.class == type }
+      @not_aligned = true
+      false
+    else
+      @mismatch_indexes = list.each.with_index.find_all{|x, i| !(p.call(x)) }.map{|x, i| i}
+      @mismatch_indexes.size == 0
+    end
+  end
+
+  def failure_message_for_should
+    if @not_aligned
+      msg_of_type_not_aligned
+    else
+<<"MSG"
+#{msg_of_base_for_should}
+#{msg_of_mismatch_indexes}
+MSG
+    end
+  end
+
+  def failure_message_for_should_not
+    @not_aligned ? msg_of_type_not_aligned : msg_of_base_for_should
+  end
+
+  def msg_of_mismatch_indexes
+    "mismatch indexes is #{@mismatch_indexes}"
+  end
+
+  def msg_of_type_not_aligned
+    "expected #{@list} type is not available."
+  end
+end
+
+
+def all_be_gt(min)
+  AllBeGt.new(min)
+end
+
 class AllBeGt
   include CollectionMatchUtil
   def initialize(min)
@@ -164,6 +158,10 @@ class AllBeGt
 end
 
 
+def all_be_gt_eq(min)
+  AllBeGtEq.new(min)
+end
+
 class AllBeGtEq
   include CollectionMatchUtil
   def initialize(min)
@@ -180,4 +178,45 @@ class AllBeGtEq
   end
 end
 
+
+def all_be_lt(max)
+  AllBeLt.new(max)
+end
+
+class AllBeLt
+  include CollectionMatchUtil
+  def initialize(max)
+    @max = max
+  end
+  def matches?(list)
+    element_matches?(list){|x| x < @max }
+  end
+  def msg_of_base_for_should
+    "expected #{@list} to all be lt #{@min}"
+  end
+  def msg_of_base_for_should_not
+    "expected #{@list} not to all be lt #{@min}"
+  end
+end
+
+
+def all_be_lt_eq(max)
+  AllBeLtEq.new(max)
+end
+
+class AllBeLtEq
+  include CollectionMatchUtil
+  def initialize(max)
+    @max = max
+  end
+  def matches?(list)
+    element_matches?(list){|x| x <= @max }
+  end
+  def msg_of_base_for_should
+    "expected #{@list} to all be lt eq #{@min}"
+  end
+  def msg_of_base_for_should_not
+    "expected #{@list} not to all be lt eq #{@min}"
+  end
+end
 

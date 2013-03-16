@@ -26,6 +26,8 @@ describe "Access to /index.json" do
     its(["$.members..age"]) { should all_be_type_of :integer }
     its(["$.members..age"]) { should all_be_gt 11 }
     its(["$.members..age"]) { should all_be_gt_eq 12 }
+    its(["$.members..age"]) { should all_be_lt 33 }
+    its(["$.members..age"]) { should all_be_lt_eq 32 }
   end
 end
 
