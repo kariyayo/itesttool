@@ -85,3 +85,17 @@ describe "Status 200 check" do
   ]
 end
 
+describe "Login" do
+  _when post "http://localhost:4567/login",
+          {
+            "nickname" => "admin",
+            "password" => "pass"
+          },
+          res_as_json,
+          "referer" => "http://local.example.com",
+          "user_agent" => "itesttool" do
+    its("code") { should eq "200" }
+    its(["$.nickname"]) {should eq ["admin"]}
+  end
+end
+

@@ -96,3 +96,13 @@ get '/index.html' do
 </html>
 HTML
 end
+
+post '/login' do
+<<-JSON
+{
+  "nickname": "#{params[:nickname]}",
+  "password": "#{params[:password]}"
+}
+JSON
+end
+
