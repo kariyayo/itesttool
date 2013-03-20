@@ -8,7 +8,7 @@ describe "Access to /index" do
 end
 
 describe "Access to /index.json" do
-  _when get "http://localhost:4567/index.json", :fotmat => "json" do
+  _when get "http://localhost:4567/index.json", as_json do
     # status code
     its("code") { should eq "200" }
 
@@ -33,7 +33,7 @@ describe "Access to /index.json" do
 end
 
 describe "Access to /index.xml" do
-  _when get "http://localhost:4567/index.xml", :format => "xml" do
+  _when get "http://localhost:4567/index.xml", as_xml do
     # status code
     its("code") { should eq "200" }
 
@@ -56,7 +56,7 @@ describe "Access to /index.xml" do
 end
 
 describe "Access to /index.html" do
-  _when get "http://localhost:4567/index.html", :format => "html" do
+  _when get "http://localhost:4567/index.html", as_html, "referer" => "http://local.example.com", "user_agent" => "itesttool" do
     # status code
     its("code") { should eq "200" }
 

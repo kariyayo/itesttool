@@ -15,17 +15,28 @@ def _when(obj, &block)
   context(obj, &block)
 end
 
-def get(url, h={})
+def as_json
+  "json"
+end
+def as_xml
+  "xml"
+end
+def as_html
+  "html"
+end
+def get(url, res_format = "json", h={})
   url_obj = URI.parse(url)
   res = Net::HTTP.start(url_obj.host, url_obj.port) {|http|
-      http.get(url_obj.path)
+    request = Net::HTTP::Get.new(url_obj.path)
+    h.each{|k, v| request.add_field k, v}
+    http.request(request)
   }
   class << res
-    attr_accessor :url, :param
+    attr_accessor :url, :res_format
     def [](path)
-      if param[:format] && param[:format].downcase == "xml"
+      if res_format && res_format == "xml"
         Nokogiri::XML(body).xpath(path).map{|x| x.text}
-      elsif param[:format] && param[:format].downcase == "html"
+      elsif res_format  && res_format == "html"
         Nokogiri::HTML(body).css(path).map{|x| x.text}
       else
         JsonPath.on(body, path)
@@ -37,7 +48,7 @@ def get(url, h={})
   end
 
   res.url = url
-  res.param = h
+  res.res_format = res_format
   res
 end
 
