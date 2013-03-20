@@ -25,6 +25,8 @@ def get(url, h={})
     def [](path)
       if param[:format] && param[:format].downcase == "xml"
         Nokogiri::XML(body).xpath(path).map{|x| x.text}
+      elsif param[:format] && param[:format].downcase == "html"
+        Nokogiri::HTML(body).css(path).map{|x| x.text}
       else
         JsonPath.on(body, path)
       end

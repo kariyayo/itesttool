@@ -55,6 +55,29 @@ describe "Access to /index.xml" do
   end
 end
 
+describe "Access to /index.html" do
+  _when get "http://localhost:4567/index.html", :format => "html" do
+    # status code
+    its("code") { should eq "200" }
+
+    # using xpath
+    its(["title"]) { should eq ["Page Title!"] }
+    its(["h1#team"]) { should eq ["ABC"] }
+    its([".member dd.name"]) { should eq ["Ichiro", "Jiro", "Saburo"] }
+    its([".member dd.age"]) { should include "32" }
+    its([".member"]) { should have(3).items }
+    its([".member"]) { should have_at_most(3).items }
+    its([".member"]) { should have_at_least(1).items }
+    its([".member dd.age"]) { should all_be_gt 11 }
+    its([".member dd.age"]) {
+      should all_be_gt_eq 10
+      should all_be_lt 33
+      should all_be_lt_eq 32
+      should be_sorted :desc
+    }
+  end
+end
+
 describe "Status 200 check" do
   status_check [
       'http://localhost:4567/index.json',

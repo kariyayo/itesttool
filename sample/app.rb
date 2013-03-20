@@ -44,3 +44,55 @@ get '/index.xml' do
 </root>
 XML
 end
+
+get '/index.html' do
+<<-HTML
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Page Title!</title>
+</head>
+<body>
+  <h1 id="team">ABC</h1>
+  <ol id="members">
+    <li class="member">
+      <dl>
+        <dt>name</dt><dd class="name">Ichiro</dd>
+        <dt>age</dt><dd class="age">32</dd>
+        <dt>hobby</dt>
+        <dd>
+          <ul>
+            <li>釣り</li><li>登山</li>
+          </ul>
+        </dd>
+      </dl>
+    </li>
+    <li class="member">
+      <dl>
+        <dt>name</dt><dd class="name">Jiro</dd>
+        <dt>age</dt><dd class="age">22</dd>
+        <dt>hobby</dt>
+        <dd>
+          <ul>
+            <li>映画鑑賞</li><li>読書</li>
+          </ul>
+        </dd>
+      </dl>
+    </li>
+    <li class="member">
+      <dl>
+        <dt>name</dt><dd class="name">Saburo</dd>
+        <dt>age</dt><dd class="age">12</dd>
+        <dt>hobby</dt>
+        <dd>
+          <ul>
+            <li>サッカー</li>
+          </ul>
+        </dd>
+      </dl>
+    </li>
+  </ol>
+</body>
+</html>
+HTML
+end
