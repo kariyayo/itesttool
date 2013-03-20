@@ -99,16 +99,22 @@ end
 
 
 module CollectionMatchUtil
-  def element_matches?(list, &p)
+  def element_matches?(list, type, &p)
     @list = list
-    @not_aligned = false
-    type = list.first.class
-    unless list.all?{|x| x.class == type }
+    list_type = list.first.class
+    unless list.all?{|x| x.class == list_type }
       @not_aligned = true
       false
     else
-      @mismatch_indexes = list.each.with_index.find_all{|x, i| !(p.call(x)) }.map{|x, i| i}
-      @mismatch_indexes.size == 0
+      begin
+        @mismatch_indexes = list.each.with_index.find_all{|x, i|
+          !(p.call(convert x, type))
+        }.map{|x, i| i}
+        @mismatch_indexes.size == 0
+      rescue ArgumentError => e
+        @not_aligned = true
+        false
+      end
     end
   end
 
@@ -134,6 +140,18 @@ MSG
   def msg_of_type_not_aligned
     "expected #{@list} type is not available."
   end
+private
+  def convert (x, type)
+    if type == Integer || type == Fixnum
+      Integer(x)
+    elsif type == Float
+      x.to_f
+    elsif type == String
+      x.to_s
+    else
+      x
+    end
+  end
 end
 
 
@@ -147,7 +165,7 @@ class AllBeGt
     @min = min
   end
   def matches?(list)
-    element_matches?(list){|x| x > @min }
+    element_matches?(list, @min.class){|x| x > @min }
   end
   def msg_of_base_for_should
     "expected #{@list} to all be gt #{@min}"
@@ -168,7 +186,7 @@ class AllBeGtEq
     @min = min
   end
   def matches?(list)
-    element_matches?(list){|x| x >= @min }
+    element_matches?(list, @min.class){|x| x >= @min }
   end
   def msg_of_base_for_should
     "expected #{@list} to all be gt eq #{@min}"
@@ -189,7 +207,7 @@ class AllBeLt
     @max = max
   end
   def matches?(list)
-    element_matches?(list){|x| x < @max }
+    element_matches?(list, @max.class){|x| x < @max }
   end
   def msg_of_base_for_should
     "expected #{@list} to all be lt #{@min}"
@@ -210,7 +228,7 @@ class AllBeLtEq
     @max = max
   end
   def matches?(list)
-    element_matches?(list){|x| x <= @max }
+    element_matches?(list, @max.class){|x| x <= @max }
   end
   def msg_of_base_for_should
     "expected #{@list} to all be lt eq #{@min}"
