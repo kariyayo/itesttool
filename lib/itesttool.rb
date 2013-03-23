@@ -29,11 +29,15 @@ module ItestHelpers
   alias res_as_xml as_xml
   alias res_as_html as_html
 
+  def headers(h = {})
+    @h = h
+  end
+
   def get(url, res_format = "json", h={})
     url_obj = URI.parse(url)
     res = Net::HTTP.start(url_obj.host, url_obj.port) {|http|
       request = Net::HTTP::Get.new(url_obj.path)
-      h.each{|k, v| request.add_field k, v}
+      add_headers(request, h)
       http.request(request)
     }
     decorate_response(res, "GET", url, res_format)
@@ -44,13 +48,18 @@ module ItestHelpers
     res = Net::HTTP.start(url_obj.host, url_obj.port) {|http|
       request = Net::HTTP::Post.new(url_obj.path)
       request.set_form_data(data, "&")
-      h.each{|k, v| request.add_field k, v}
+      add_headers(request, h)
       http.request(request)
     }
     decorate_response(res, "POST", url, res_format)
   end
 
 private
+  def add_headers(request, h={})
+    if @h then h.merge! @h end
+    h.each{|k, v| request.add_field k, v}
+  end
+
   def decorate_response(res, method, url, res_format)
     class << res
       attr_accessor :url, :res_format, :method
@@ -73,7 +82,7 @@ private
     res
   end
 
-  module_function :get, :post, :decorate_response
+  module_function :get, :post, :add_headers, :decorate_response
 end
 
 

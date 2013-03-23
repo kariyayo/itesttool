@@ -88,15 +88,17 @@ describe "Status 200 check" do
 end
 
 describe "Login" do
+  _given {
+    headers "referer" => "http://local.example.com",
+            "user_agent" => "itesttool"
+  }
   _when {
     post "http://localhost:4567/login",
       {
         "nickname" => "admin",
         "password" => "pass"
       },
-      res_as_json,
-      "referer" => "http://local.example.com",
-      "user_agent" => "itesttool"
+      res_as_json
   }
   _then {
     res.code.should eq "200"
