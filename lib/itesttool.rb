@@ -1,3 +1,9 @@
+def _given(&b) before(:each, &b) end
+
+def _when(&b) let(:res, &b) end
+def _then(&b) it(&b) end
+
+
 $:.unshift File.dirname(__FILE__)
 require 'custom_matchers'
 
@@ -7,13 +13,6 @@ require 'uri'
 require 'jsonpath'
 require 'nokogiri'
 
-def _given(&block)
-  before(:all, &block)
-end
-
-def _when(obj, &block)
-  context(obj, &block)
-end
 
 def as_json
   "json"
