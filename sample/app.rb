@@ -106,3 +106,6 @@ post '/login' do
 JSON
 end
 
+post '/echo' do
+  request.body.string
+end

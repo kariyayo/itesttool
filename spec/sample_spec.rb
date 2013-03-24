@@ -94,15 +94,39 @@ describe "Login" do
   }
   _when {
     post "http://localhost:4567/login",
-      {
-        "nickname" => "admin",
-        "password" => "pass"
-      },
-      res_as_json
+         body_as_form("nickname" => "admin",
+                      "password" => "pass"),
+         res_is_json
   }
   _then {
     res.code.should eq "200"
     res["$.nickname"].should eq ["admin"]
   }
+end
+
+describe "Post Json" do
+  context 'use "body"' do
+    _when {
+      post "http://localhost:4567/echo",
+           body('{"name":"Shiro","age":2}'),
+           res_is_json
+    }
+    _then {
+      res.code.should eq "200"
+      res.body.should eq '{"name":"Shiro","age":2}'
+    }
+  end
+  context 'use "body_as_json"' do
+    _when {
+      post "http://localhost:4567/echo",
+           body_as_json("name" => "Shiro",
+                        "age" => 2),
+           res_is_json
+    }
+    _then {
+      res.code.should eq "200"
+      res.body.should eq '{"name":"Shiro","age":2}'
+    }
+  end
 end
 

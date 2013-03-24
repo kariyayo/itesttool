@@ -18,6 +18,7 @@ module ItestHelpers
   require 'rubygems'
   require 'net/http'
   require 'uri'
+  require 'json'
   require 'jsonpath'
   require 'nokogiri'
 
@@ -25,12 +26,22 @@ module ItestHelpers
   def as_xml() "xml" end
   def as_html() "html" end
 
-  alias res_as_json as_json
-  alias res_as_xml as_xml
-  alias res_as_html as_html
+  alias res_is_json as_json
+  alias res_is_xml as_xml
+  alias res_is_html as_html
 
   def headers(h = {})
     @h = h
+  end
+
+  def body(data = "")
+    {:body => data}
+  end
+  def body_as_form(data = {})
+    {:form => data}
+  end
+  def body_as_json(data = {})
+    {:json => data}
   end
 
   def get(url, res_format = "json", h={})
@@ -47,7 +58,13 @@ module ItestHelpers
     url_obj = URI.parse(url)
     res = Net::HTTP.start(url_obj.host, url_obj.port) {|http|
       request = Net::HTTP::Post.new(url_obj.path)
-      request.set_form_data(data, "&")
+      if data.include? :form
+        request.set_form_data(data[:form], "&")
+      elsif data.include? :json
+        request.body = JSON.generate(data[:json])
+      else
+        request.body = data[:body]
+      end
       add_headers(request, h)
       http.request(request)
     }
