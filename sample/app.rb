@@ -109,3 +109,12 @@ end
 post '/echo' do
   request.body.string
 end
+
+put '/echo' do
+  request.body.string
+end
+
+delete '/echo' do
+  request.body.string
+end
+

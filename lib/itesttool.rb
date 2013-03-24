@@ -58,23 +58,51 @@ module ItestHelpers
     url_obj = URI.parse(url)
     res = Net::HTTP.start(url_obj.host, url_obj.port) {|http|
       request = Net::HTTP::Post.new(url_obj.path)
-      if data.include? :form
-        request.set_form_data(data[:form], "&")
-      elsif data.include? :json
-        request.body = JSON.generate(data[:json])
-      else
-        request.body = data[:body]
-      end
-      add_headers(request, h)
+      setup(request, data, h)
       http.request(request)
     }
     decorate_response(res, "POST", url, res_format)
   end
 
+  def put(url, data, res_format = "json", h={})
+    url_obj = URI.parse(url)
+    res = Net::HTTP.start(url_obj.host, url_obj.port) {|http|
+      request = Net::HTTP::Put.new(url_obj.path)
+      setup(request, data, h)
+      http.request(request)
+    }
+    decorate_response(res, "PUT", url, res_format)
+  end
+
+  def delete(url, data, res_format = "json", h={})
+    url_obj = URI.parse(url)
+    res = Net::HTTP.start(url_obj.host, url_obj.port) {|http|
+      request = Net::HTTP::DELETE.new(url_obj.path)
+      setup(request, data, h)
+      http.request(request)
+    }
+    decorate_response(res, "DELETE", url, res_format)
+  end
+
 private
+  def setup(request, data, h)
+    set_body(request, data)
+    add_headers(request, h)
+  end
+
   def add_headers(request, h={})
     if @h then h.merge! @h end
     h.each{|k, v| request.add_field k, v}
+  end
+
+  def set_body(request, data)
+    if data.include? :form
+      request.set_form_data(data[:form], "&")
+    elsif data.include? :json
+      request.body = JSON.generate(data[:json])
+    else
+      request.body = data[:body]
+    end
   end
 
   def decorate_response(res, method, url, res_format)

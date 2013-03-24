@@ -138,6 +138,19 @@ describe 'POST json' do
   end
 end
 
+describe 'PUT json' do
+  _when {
+    put 'http://localhost:4567/echo',
+        body_as_json('name' => 'Shiro',
+                     'age' => 2),
+        res_is_json
+  }
+  _then {
+    res.code.should eq '200'
+    res.body.should eq '{"name":"Shiro","age":2}'
+  }
+end
+
 describe 'Status 200 check' do
   status_check [
       'http://localhost:4567/index.json',
