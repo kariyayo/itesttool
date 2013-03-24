@@ -23,7 +23,9 @@ resは、Net::HTTPResponseオブジェクトです。
 上の例にもありますが、ステータスコードは`res.code.should eq '200'`と書きます。  
 レスポンスボディは`res.body.should eq 'Hello world!'`というように書きます。
 
-レスポンスボディが、JSON、XML、HTMLの場合はそれぞれ、JSONPath、XPath、CSSセレクタを用いて要素を検証できます。
+レスポンスボディが、JSON、XML、HTMLの場合はそれぞれ、JSONPath、XPath、CSSセレクタを用いて要素を検証できます。  
+JSONPath、XPathについては、下のサイトを参考にしてください。  
+[http://goessner.net/articles/JsonPath/](http://goessner.net/articles/JsonPath/)
 
 また、配列に対する検証のために、以下のカスタムマッチャーを定義してます。  
 
