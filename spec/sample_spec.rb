@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 require './lib/itesttool'
 
 describe 'send GET request' do
@@ -22,6 +23,7 @@ describe 'expectation for returned JSON' do
     # using jsonpath
     res['$.team'].should eq ['ABC']
     res['$.members..name'].should eq ['Ichiro', 'Jiro', 'Saburo']
+    res['$.members..hobbies'].should eq [['釣り', '登山'], ['映画鑑賞', '読書'], ['サッカー']]
     res['$.members..age'].should include 32
     res['$.members[::]'].should have(3).items
     res['$.members[::]'].should have_at_most(3).items
