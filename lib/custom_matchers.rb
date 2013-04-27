@@ -81,14 +81,14 @@ class AllBeTypeOf
       msg_of_type_invalid
     else
 <<"MSG"
-expected #{@list} to all be type of #{@type}
+expected #{@list.inspect} to all be type of #{@type}
 mismatch index is #{@mismatch_indexes}
 MSG
     end
   end
 
   def failure_message_for_should_not
-    @type_invalid ? msg_of_type_invalid : "expected #{@list} not to all be type of #{@type}"
+    @type_invalid ? msg_of_type_invalid : "expected #{@list.inspect} not to all be type of #{@type}"
   end
 
 private
@@ -138,7 +138,7 @@ MSG
   end
 
   def msg_of_type_not_aligned
-    "expected #{@list} type is not available."
+    "expected #{@list.inspect} type is not available."
   end
 private
   def convert (x, type)
@@ -168,10 +168,10 @@ class AllBeGt
     element_matches?(list, @min.class){|x| x > @min }
   end
   def msg_of_base_for_should
-    "expected #{@list} to all be gt #{@min}"
+    "expected #{@list.inspect} to all be gt #{@min}"
   end
   def msg_of_base_for_should_not
-    "expected #{@list} not to all be gt #{@min}"
+    "expected #{@list.inspect} not to all be gt #{@min}"
   end
 end
 
@@ -189,10 +189,10 @@ class AllBeGtEq
     element_matches?(list, @min.class){|x| x >= @min }
   end
   def msg_of_base_for_should
-    "expected #{@list} to all be gt eq #{@min}"
+    "expected #{@list.inspect} to all be gt eq #{@min}"
   end
   def msg_of_base_for_should_not
-    "expected #{@list} not to all be gt eq #{@min}"
+    "expected #{@list.inspect} not to all be gt eq #{@min}"
   end
 end
 
@@ -210,10 +210,10 @@ class AllBeLt
     element_matches?(list, @max.class){|x| x < @max }
   end
   def msg_of_base_for_should
-    "expected #{@list} to all be lt #{@min}"
+    "expected #{@list.inspect} to all be lt #{@min}"
   end
   def msg_of_base_for_should_not
-    "expected #{@list} not to all be lt #{@min}"
+    "expected #{@list.inspect} not to all be lt #{@min}"
   end
 end
 
@@ -231,10 +231,10 @@ class AllBeLtEq
     element_matches?(list, @max.class){|x| x <= @max }
   end
   def msg_of_base_for_should
-    "expected #{@list} to all be lt eq #{@min}"
+    "expected #{@list.inspect} to all be lt eq #{@min}"
   end
   def msg_of_base_for_should_not
-    "expected #{@list} not to all be lt eq #{@min}"
+    "expected #{@list.inspect} not to all be lt eq #{@min}"
   end
 end
 
@@ -273,7 +273,7 @@ class BeSorted
     elsif @order_invalid
       msg_of_type_invalid
     else
-      "expected #{@list} to be sorted #{@order}"
+      "expected #{@list.inspect} to be sorted #{@order}"
     end
   end
 

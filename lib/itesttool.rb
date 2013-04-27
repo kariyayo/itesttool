@@ -2,11 +2,11 @@ def _given(&b) before(:each, &b) end
 def _when(&b) let(:res, &b) end
 def _then(&b) it(&b) end
 
-def status_check(code = "200", urls)
+def status_check(urls)
   include ItestHelpers
   urls.each do |url|
     context ItestHelpers.get url do
-      its(:code) { should eq code.to_s }
+      its(:code) { should eq "200" }
     end
   end
 end
