@@ -1,0 +1,10 @@
+# select database
+#   - mysql
+dbtype: mysql
+
+dbname:
+ username: user
+ password: pass
+ server: localhost
+ socket: '/var/run/mysqld/mysqld.sock'
+

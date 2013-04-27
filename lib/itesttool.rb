@@ -22,6 +22,11 @@ module ItestHelpers
   require 'jsonpath'
   require 'nokogiri'
 
+  config = YAML.load_file("config/database.yml")
+  unless config.nil?
+    require 'mysql_tables' if config['dbtype'] == 'mysql'
+  end
+
   def as_json() "json" end
   def as_xml() "xml" end
   def as_html() "html" end
@@ -84,6 +89,10 @@ module ItestHelpers
     decorate_response(res, "DELETE", url, res_format)
   end
 
+  def db(dbname)
+    DB.new(dbname)
+  end
+
 private
   def setup(request, data, h)
     set_body(request, data)
@@ -130,6 +139,14 @@ private
   module_function :get, :post, :add_headers, :decorate_response
 end
 
+class DB
+  def initialize(dbname)
+    @dbname = dbname
+  end
+  def table(tablename)
+    Table.new(@dbname, tablename)
+  end
+end
 
 RSpec.configure do |c|
     c.include ItestHelpers
