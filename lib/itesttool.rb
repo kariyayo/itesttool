@@ -146,6 +146,13 @@ class DB
   def table(tablename)
     Table.new(@dbname, tablename)
   end
+  def method_missing(action, *args)
+    if /\w+/ =~ action.to_s
+      table(action.to_s)
+    else
+      super
+    end
+  end
 end
 
 RSpec.configure do |c|
