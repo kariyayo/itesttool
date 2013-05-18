@@ -12,7 +12,7 @@ resは、Net::HTTPResponseオブジェクトです。
 ~~~~~ {ruby}
 describe 'send GET request' do
   _given {
-    # 前提条件を書く
+    headers 'referer' => 'http://local.example.com',
   }
   _when { get 'http://localhost:4567/index' }
   _then {
@@ -138,23 +138,33 @@ member_ages = res['.member dd.age']
 ~~~~~
 
 
-## リクエストヘッダを設定する
-リクエストヘッダの設定の仕方は、2通りあります。  
-1つ目が、`get`の第３引数としてハッシュを渡す方法です。
+## クエリパラメータを設定する
+クエリパラメータを設定する方法は2通りあります。  
+1つ目が、単純にurlの末尾に"?"をつけてクエリパラメータを指定する方法です。
+~~~~~ {ruby}
+_when { get 'http://localhost:4567/index?night=true', as_text }
+_then {
+  res.code.should eq '200'
+}
+~~~~~
 
+2つ目が、`query`ヘルパー関数を使う方法です。
 ~~~~~ {ruby}
 _when {
-  get 'http://localhost:4567/index.html', as_html,
-        'referer' => 'http://local.example.com',
-        'user_agent' => 'itesttool'
+  get 'http://localhost:4567/index',
+      as_text,
+      query('night' => 'true',
+            'times' => 3)
 }
 _then {
   res.code.should eq '200'
 }
 ~~~~~
 
-2つ目が、`_given`ブロックで`heades`を使う方法です。
 
+## リクエストヘッダを設定する
+リクエストヘッダの設定は、`_given`ブロックで、`headers`ヘルパー関数を呼び出して設定します。  
+`headers`関数に、ハッシュを渡して設定します。
 ~~~~~ {ruby}
 _given {
   headers 'referer' => 'http://local.example.com',
