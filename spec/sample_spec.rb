@@ -2,14 +2,37 @@
 require './lib/itesttool'
 
 describe 'send GET request' do
-  _when { get 'http://localhost:4567/index' }
-  _then {
-    # status code
-    res.code.should eq '200'
+  context 'no query parameter' do
+    _when { get 'http://localhost:4567/index', as_text }
+    _then {
+      # status code
+      res.code.should eq '200'
 
-    # response body
-    res.body.should eq 'Hello world!'
-  }
+      # response body
+      res.body.should eq 'Hello world!'
+    }
+  end
+
+  context 'with query parameter' do
+    context 'use "?"' do
+      _when { get 'http://localhost:4567/index?night=true', as_text }
+      _then {
+        res.code.should eq '200'
+        res.body.should eq 'Good night!'
+      }
+    end
+    context 'use "query" helper method"' do
+      _when {
+        get 'http://localhost:4567/index',
+            as_text,
+            query('night'  => 'true',
+                  'times' => 3)}
+      _then {
+        res.code.should eq '200'
+        res.body.should eq 'Good night!Good night!Good night!'
+      }
+    end
+  end
 end
 
 describe 'expectation for returned JSON' do
@@ -83,22 +106,14 @@ describe 'expectation for returned HTML' do
 end
 
 describe 'set request headers' do
-  context 'specified request headers in argument of "get()"' do
-    _when { get 'http://localhost:4567/index.html', as_html, 'referer' => 'http://local.example.com', 'user_agent' => 'itesttool' }
-    _then {
-      res.code.should eq '200'
-    }
-  end
-  context 'specified request headers in "_given"' do
-    _given {
-      headers 'referer' => 'http://local.example.com',
-              'user_agent' => 'itesttool'
-    }
-    _when { get 'http://localhost:4567/index.html', as_html }
-    _then {
-      res.code.should eq '200'
-    }
-  end
+  _given {
+    headers 'referer' => 'http://local.example.com',
+            'user_agent' => 'itesttool'
+  }
+  _when { get 'http://localhost:4567/index.html', as_html }
+  _then {
+    res.code.should eq '200'
+  }
 end
 
 describe 'POST form data' do

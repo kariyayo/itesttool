@@ -2,7 +2,17 @@
 require 'sinatra'
 
 get '/index' do
-  'Hello world!'
+  greet =
+    if params[:night]
+      'Good night!'
+    else
+      'Hello world!'
+    end
+  if params[:times]
+    greet * params[:times].to_i
+  else
+    greet
+  end
 end
 
 get '/index.json' do

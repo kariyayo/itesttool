@@ -27,6 +27,7 @@ module ItestHelpers
     require 'mysql_tables' if config['dbtype'] == 'mysql'
   end
 
+  def as_text() "text" end
   def as_json() "json" end
   def as_xml() "xml" end
   def as_html() "html" end
@@ -36,7 +37,11 @@ module ItestHelpers
   alias res_is_html as_html
 
   def headers(h = {})
-    @h = h
+    @headers = h
+  end
+
+  def query(h = {})
+     h.map{ |k, v| URI.encode(k) + "=" + URI.encode(v.to_s) }.join("&")
   end
 
   def body(data = "")
@@ -49,41 +54,50 @@ module ItestHelpers
     {:json => data}
   end
 
-  def get(url, res_format = "json", h={})
+  def get(url, res_format="text", query="")
     url_obj = URI.parse(url)
     res = Net::HTTP.start(url_obj.host, url_obj.port) {|http|
-      request = Net::HTTP::Get.new(url_obj.path)
-      add_headers(request, h)
+      queries = []
+      queries.push(query) unless query.empty?
+      queries.push(url_obj.query) unless url_obj.query.nil?
+      path_with_query =
+        if queries.empty?
+          url_obj.path
+        else
+          url_obj.path + "?" + queries.join("&")
+        end
+      request = Net::HTTP::Get.new(path_with_query)
+      add_headers(request)
       http.request(request)
     }
     decorate_response(res, "GET", url, res_format)
   end
 
-  def post(url, data, res_format = "json", h={})
+  def post(url, data, res_format)
     url_obj = URI.parse(url)
     res = Net::HTTP.start(url_obj.host, url_obj.port) {|http|
       request = Net::HTTP::Post.new(url_obj.path)
-      setup(request, data, h)
+      setup(request, data)
       http.request(request)
     }
     decorate_response(res, "POST", url, res_format)
   end
 
-  def put(url, data, res_format = "json", h={})
+  def put(url, data, res_format)
     url_obj = URI.parse(url)
     res = Net::HTTP.start(url_obj.host, url_obj.port) {|http|
       request = Net::HTTP::Put.new(url_obj.path)
-      setup(request, data, h)
+      setup(request, data)
       http.request(request)
     }
     decorate_response(res, "PUT", url, res_format)
   end
 
-  def delete(url, data, res_format = "json", h={})
+  def delete(url, data, res_format)
     url_obj = URI.parse(url)
     res = Net::HTTP.start(url_obj.host, url_obj.port) {|http|
       request = Net::HTTP::DELETE.new(url_obj.path)
-      setup(request, data, h)
+      setup(request, data)
       http.request(request)
     }
     decorate_response(res, "DELETE", url, res_format)
@@ -94,14 +108,13 @@ module ItestHelpers
   end
 
 private
-  def setup(request, data, h)
+  def setup(request, data)
     set_body(request, data)
-    add_headers(request, h)
+    add_headers(request)
   end
 
-  def add_headers(request, h={})
-    if @h then h.merge! @h end
-    h.each{|k, v| request.add_field k, v}
+  def add_headers(request)
+    if @headers then @headers.each{|k, v| request.add_field k, v} end
   end
 
   def set_body(request, data)
@@ -120,9 +133,9 @@ private
       def [](path)
         if res_format && res_format == "xml"
           Nokogiri::XML(body).xpath(path).map{|x| x.text}
-        elsif res_format  && res_format == "html"
+        elsif res_format && res_format == "html"
           Nokogiri::HTML(body).css(path).map{|x| x.text}
-        else
+        elsif res_format && res_format == "json"
           JsonPath.on(body, path)
         end
       end
