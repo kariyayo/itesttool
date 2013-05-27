@@ -24,7 +24,7 @@ class EqSchemaOf
   def failure_message_for_should
 <<"MSG"
 
-Invalid response body on "#{schema_file}".
+Invalid response body on "#{@schema_file}".
 #{@msg}
 
 Body is
