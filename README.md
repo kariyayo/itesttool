@@ -2,6 +2,27 @@
 WebアプリケーションのEnd-to-Endのテストを自動化するためのツール。  
 RSpecにユーティリティを追加して実現してます。
 
+
+# Install
+cloneしたらBundlerを使って必要なgemをインストールします。
+~~~~~ {sh}
+$ bundle install --path vendor/bundle
+~~~~~
+サンプルアプリケーションが起動します。
+
+~~~~~ {sh}
+$ bundle exec ruby sample/app.rb
+~~~~~
+
+以下のコマンドでサンプルに対するテストを実行します。
+
+~~~~~ {sh}
+$ bundle exec rspec
+~~~~~
+
+テストが通れば準備完了です。
+
+
 # Usage
 ## GET リクエストを送信する
 GET リクエスト送って、レスポンスコードを確認するには以下のようにします。  
