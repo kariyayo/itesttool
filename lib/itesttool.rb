@@ -21,6 +21,7 @@ module ItestHelpers
   require 'json'
   require 'jsonpath'
   require 'nokogiri'
+  require 'yaml'
 
   config = YAML.load_file("config/database.yml")
   unless config.nil?
