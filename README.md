@@ -31,12 +31,11 @@ JSONPath、XPathについては、下のサイトを参考にしてください�
 [http://goessner.net/articles/JsonPath/](http://goessner.net/articles/JsonPath/)
 
 また、配列に対する検証のために、以下のカスタムマッチャーを定義してます。  
+`all`は引数に、matcherを受け取ります。引数で受け取ったmatcherを配列の全要素に適用します。  
+`be_one_and`は引数に、matcherを受け取ります。まず配列の要素が1つであることを検証してから引数で受け取ったmatcherを要素に適用します。
 
-  - `all_be_type_of`
-  - `all_be_gt`
-  - `all_be_gt_eq`
-  - `all_be_lt`
-  - `all_be_lt_eq`
+  - `all`
+  - `be_one_and`
   - `be_sorted`
 
 
@@ -50,12 +49,12 @@ res['$.members..age'].should include 32
 res['$.members[::]'].should have(3).items
 res['$.members[::]'].should have_at_most(3).items
 res['$.members[::]'].should have_at_least(1).items
-res['$.members..name'].should all_be_type_of :string
-res['$.members..age'].should all_be_type_of :integer
-res['$.members..age'].should all_be_gt 11
-res['$.members..age'].should all_be_gt_eq 12
-res['$.members..age'].should all_be_lt 33
-res['$.members..age'].should all_be_lt_eq 32
+res['$.members..name'].should all be_kind_of String
+res['$.members..age'].should all be_kind_of Integer
+res['$.members..age'].should all be > 11
+res['$.members..age'].should all be >= 12
+res['$.members..age'].should all be < 33
+res['$.members..age'].should all be <= 32
 res['$.members..age'].should be_sorted :desc
 ~~~~~
 
@@ -64,11 +63,11 @@ res['$.members..age'].should be_sorted :desc
 
 ~~~~~ {ruby}
 member_ages = res['$.members..age']
-  member_ages.should all_be_type_of :integer
-  member_ages.should all_be_gt 11
-  member_ages.should all_be_gt_eq 12
-  member_ages.should all_be_lt 33
-  member_ages.should all_be_lt_eq 32
+  member_ages.should all be_kind_of Integer
+  member_ages.should all be > 11
+  member_ages.should all be >= 12
+  member_ages.should all be < 33
+  member_ages.should all be <= 32
   member_ages.should be_sorted :desc
 ~~~~~
 
@@ -109,11 +108,11 @@ res['/root/members//age/text()'].should include '32'
 res['/root/members/*'].should have(3).items
 res['/root/members/*'].should have_at_most(3).items
 res['/root/members/*'].should have_at_least(1).items
-res['/root/members//age/text()'].should all_be_gt 11
+res['/root/members//age/text()'].should all be > "11"
 member_ages = res['/root/members//age/text()']
-  member_ages.should all_be_gt_eq 10
-  member_ages.should all_be_lt 33
-  member_ages.should all_be_lt_eq 32
+  member_ages.should all be >= "10"
+  member_ages.should all be < "33"
+  member_ages.should all be <= "32"
   member_ages.should be_sorted :desc
 res['/root/members/member/@order'].should be_sorted :asc
 ~~~~~
@@ -130,11 +129,11 @@ res['.member dd.age'].should include '32'
 res['.member'].should have(3).items
 res['.member'].should have_at_most(3).items
 res['.member'].should have_at_least(1).items
-res['.member dd.age'].should all_be_gt 11
+res['.member dd.age'].should all be > "11"
 member_ages = res['.member dd.age']
-  member_ages.should all_be_gt_eq 10
-  member_ages.should all_be_lt 33
-  member_ages.should all_be_lt_eq 32
+  member_ages.should all be >= 10
+  member_ages.should all be < 33
+  member_ages.should all be <= 32
   member_ages.should be_sorted :desc
 ~~~~~
 

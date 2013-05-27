@@ -51,12 +51,12 @@ describe 'expectation for returned JSON' do
     res['$.members[::]'].should have(3).items
     res['$.members[::]'].should have_at_most(3).items
     res['$.members[::]'].should have_at_least(1).items
-    res['$.members..name'].should all_be_type_of :string
-    res['$.members..age'].should all_be_type_of :integer
-    res['$.members..age'].should all_be_gt 11
-    res['$.members..age'].should all_be_gt_eq 12
-    res['$.members..age'].should all_be_lt 33
-    res['$.members..age'].should all_be_lt_eq 32
+    res['$.members..name'].should all be_a_kind_of String
+    res['$.members..age'].should all be_a_kind_of Integer
+    res['$.members..age'].should all be > 11
+    res['$.members..age'].should all be >= 12
+    res['$.members..age'].should all be < 33
+    res['$.members..age'].should all be <= 32
     res['$.members..age'].should be_sorted :desc
   }
 end
@@ -73,11 +73,11 @@ describe 'expectation for returned XML' do
     res['/root/members/*'].should have(3).items
     res['/root/members/*'].should have_at_most(3).items
     res['/root/members/*'].should have_at_least(1).items
-    res['/root/members//age/text()'].should all_be_gt 11
+    res['/root/members//age/text()'].should all be > "11"
     member_ages = res['/root/members//age/text()']
-      member_ages.should all_be_gt_eq 10
-      member_ages.should all_be_lt 33
-      member_ages.should all_be_lt_eq 32
+      member_ages.should all be >= "10"
+      member_ages.should all be < "33"
+      member_ages.should all be <= "32"
       member_ages.should be_sorted :desc
     res['/root/members/member/@order'].should be_sorted :asc
   }
@@ -96,11 +96,11 @@ describe 'expectation for returned HTML' do
     res['.member'].should have(3).items
     res['.member'].should have_at_most(3).items
     res['.member'].should have_at_least(1).items
-    res['.member dd.age'].should all_be_gt 11
+    res['.member dd.age'].should all be > "11"
     member_ages = res['.member dd.age']
-      member_ages.should all_be_gt_eq 10
-      member_ages.should all_be_lt 33
-      member_ages.should all_be_lt_eq 32
+      member_ages.should all be >= "10"
+      member_ages.should all be < "33"
+      member_ages.should all be <= "32"
       member_ages.should be_sorted :desc
   }
 end
