@@ -25,7 +25,12 @@ module ItestHelpers
 
   config = YAML.load_file("config/database.yml")
   unless config.nil?
-    require 'mysql_tables' if config['dbtype'] == 'mysql'
+    case config['dbtype']
+    when 'mysql' then
+      require 'mysql_tables'
+    when 'mssql' then
+      require 'mssql_tables'
+    end
   end
 
   def as_text() "text" end

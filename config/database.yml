@@ -1,5 +1,6 @@
 # select database
 #   - mysql
+#   - mssql
 dbtype: mysql
 
 dbname:
