@@ -138,3 +138,30 @@ class BeOneAnd
 
 end
 
+def include_with(key, values)
+  IncludeWith.new(key, values)
+end
+
+class IncludeWith
+  def initialize(key, values)
+    @key = key
+    @values = values
+  end
+  def matches?(rows)
+    @rows = rows
+    list = rows.map{|x| x[@key]}
+    Set[*list] == Set[*@values]
+  end
+
+  def failure_message_for_should
+    str = @values.map{|x| "#{@key} => #{x}"}.join(" and ")
+    "expected #{@rows.inspect} to include #{str}"
+  end
+
+private
+  def msg_of_type_invalid
+    str = @values.map{|x| "#{@key} => #{x}"}.join(" and ")
+    "expected not #{@rows.inspect} to include #{str}"
+  end
+end
+
