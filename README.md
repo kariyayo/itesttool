@@ -81,16 +81,17 @@ res['$.members..age'].should be_sorted :desc
 ~~~~~
 
 
-同じ要素は以下のようにした方が見やすいかも。
+同じ要素を色々検証したい場合は、`select`を使ってブロック内に検証を書くと見やすいかも。
 
 ~~~~~ {ruby}
-member_ages = res['$.members..age']
+res.select('$.members..age') do |member_ages|
   member_ages.should all be_kind_of Integer
   member_ages.should all be > 11
   member_ages.should all be >= 12
   member_ages.should all be < 33
   member_ages.should all be <= 32
   member_ages.should be_sorted :desc
+end
 ~~~~~
 
 また、JSON schemaによる検証もできます。  

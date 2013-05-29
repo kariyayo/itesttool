@@ -147,13 +147,19 @@ private
     class << res
       attr_accessor :url, :res_format, :method
       def [](path)
-        if res_format && res_format == "xml"
-          Nokogiri::XML(body).xpath(path).map{|x| x.text}
-        elsif res_format && res_format == "html"
-          Nokogiri::HTML(body).css(path).map{|x| x.text}
-        elsif res_format && res_format == "json"
-          JsonPath.on(body, path)
-        end
+        select(path)
+      end
+      def select(path, &block)
+        result =
+          if res_format && res_format == "xml"
+            Nokogiri::XML(body).xpath(path).map{|x| x.text}
+          elsif res_format && res_format == "html"
+            Nokogiri::HTML(body).css(path).map{|x| x.text}
+          elsif res_format && res_format == "json"
+            JsonPath.on(body, path)
+          end
+        block.call(result) unless block.nil?
+        result
       end
       def to_s
         method + " " + url

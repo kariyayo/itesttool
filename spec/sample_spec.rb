@@ -74,11 +74,12 @@ describe 'expectation for returned XML' do
     res['/root/members/*'].should have_at_most(3).items
     res['/root/members/*'].should have_at_least(1).items
     res['/root/members//age/text()'].should all be > "11"
-    member_ages = res['/root/members//age/text()']
+    res.select('/root/members//age/text()') do |member_ages|
       member_ages.should all be >= "10"
       member_ages.should all be < "33"
       member_ages.should all be <= "32"
       member_ages.should be_sorted :desc
+    end
     res['/root/members/member/@order'].should be_sorted :asc
   }
 end
