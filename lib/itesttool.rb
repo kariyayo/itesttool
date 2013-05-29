@@ -125,12 +125,21 @@ private
 
   def set_body(request, data)
     if data.include? :form
-      request.set_form_data(data[:form], "&")
+      set_form_data(request, data[:form])
     elsif data.include? :json
       request.body = JSON.generate(data[:json])
     else
       request.body = data[:body]
     end
+  end
+
+  def set_form_data(request, params, sep = '&')
+    request.body = params.map {|k, v| encode_kvpair(k, v) }.flatten.join(sep)
+    request.content_type = 'application/x-www-form-urlencoded'
+  end
+
+  def encode_kvpair(k, vs)
+    Array(vs).map {|v| "#{URI::encode(k.to_s)}=#{URI::encode(v.to_s)}" }
   end
 
   def decorate_response(res, method, url, res_format)
