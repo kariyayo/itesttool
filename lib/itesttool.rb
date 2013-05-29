@@ -1,3 +1,4 @@
+# coding: utf-8
 def _given(&b) before(:each, &b) end
 def _when(&b) let(:res, &b) end
 def _then(&b) it(&b) end
