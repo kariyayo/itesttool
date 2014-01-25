@@ -24,16 +24,6 @@ module ItestHelpers
   require 'nokogiri'
   require 'yaml'
 
-  config = YAML.load_file("config/database.yml")
-  unless config.nil?
-    case config['dbtype']
-    when 'mysql' then
-      require 'mysql_tables'
-    when 'mssql' then
-      require 'mssql_tables'
-    end
-  end
-
   def as_text() "text" end
   def as_json() "json" end
   def as_xml() "xml" end
@@ -110,10 +100,6 @@ module ItestHelpers
     decorate_response(res, "DELETE", url, res_format)
   end
 
-  def db(dbname)
-    DB.new(dbname)
-  end
-
 private
   def setup(request, data)
     set_body(request, data)
@@ -172,22 +158,6 @@ private
   end
 
   module_function :get, :post, :add_headers, :decorate_response
-end
-
-class DB
-  def initialize(dbname)
-    @dbname = dbname
-  end
-  def table(tablename)
-    Table.new(@dbname, tablename)
-  end
-  def method_missing(action, *args)
-    if /\w+/ =~ action.to_s
-      table(action.to_s)
-    else
-      super
-    end
-  end
 end
 
 RSpec.configure do |c|
