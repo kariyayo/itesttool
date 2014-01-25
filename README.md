@@ -254,20 +254,6 @@ _then {
 PUT, DELETEリクエストの場合は、`post`の代わりに`put`,`delete`を使ってください。  
 後は`post`の場合といっしょです。
 
-## ステータスコードのみのテスト
-とりあえずGETリクエスト送って、ステータスコードだけ確認したい、みたいなときは以下のように書けます。  
-`status_check`の引数に、URLの配列を指定してください。
-
-~~~~~ {ruby}
-describe 'Status 200 check' do
-  status_check [
-      'http://localhost:4567/index.json',
-      'http://localhost:4567/index.xml',
-      'http://localhost:4567/index.html',
-      'http://localhost:4567/index'
-  ]
-end
-~~~~~
 
 # License
 The MIT License. See LICENSE.txt

@@ -169,10 +169,3 @@ describe 'PUT json' do
   }
 end
 
-describe 'Status 200 check' do
-  status_check [
-      'http://localhost:4567/index.json',
-      'http://localhost:4567/index'
-  ]
-end
-

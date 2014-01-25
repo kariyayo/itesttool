@@ -3,16 +3,6 @@ def _given(&b) before(:each, &b) end
 def _when(&b) let(:res, &b) end
 def _then(&b) it(&b) end
 
-def status_check(urls)
-  include ItestHelpers
-  urls.each do |url|
-    context ItestHelpers.get url do
-      its(:code) { should eq "200" }
-    end
-  end
-end
-
-
 module ItestHelpers
   $:.unshift File.dirname(__FILE__)
   require 'custom_matchers'
