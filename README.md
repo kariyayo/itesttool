@@ -2,39 +2,50 @@
 
 [![Build Status](https://travis-ci.org/bati11/itesttool.png?branch=master)](https://travis-ci.org/bati11/itesttool)
 
-WebアプリケーションのEnd-to-Endのテストを自動化するためのツール。  
-RSpecにユーティリティを追加して実現してます。
+itesttool is Web API end-to-end test tool in RSpec.
+
+```ruby
+describe 'send GET request' do
+  _given {
+    headers 'referer' => 'http://local.example.com',
+  }
+  _when { get 'http://localhost:4567/index', as_json }
+  _then {
+    res.code.should eq '200'
+    res.body.should eq_schema_of 'json_schema/hello.json'
+    res['$.members..name'].should eq ['Ichiro', 'Jiro', 'Saburo']
+  }
+end
+```
 
 
-# Install
-cloneしたらBundlerを使って必要なgemをインストールします。
-~~~~~ {sh}
+## Installation
+Add this line to your application's Gemfile
+
+```ruby
+gem 'rspec-parameterized'
+```
+
+And then execute
+```sh
 $ bundle install --path vendor/bundle
-~~~~~
-サンプルアプリケーションが起動します。
-
-~~~~~ {sh}
-$ bundle exec ruby sample/app.rb
-~~~~~
-
-以下のコマンドでサンプルに対するテストを実行します。
-
-~~~~~ {sh}
-$ bundle exec rspec
-~~~~~
-
-テストが通れば準備完了です。
+```
 
 
 # Usage
-## GET リクエストを送信する
-GET リクエスト送って、レスポンスコードを確認するには以下のようにします。  
-`_given` ブロックでテストの前提条件を書きます。`_given`は、単純にRSpecの`before`の別名です。  
-`_when` ブロックでGETリクエストを送ります。  
-`_then` ブロック内でres変数を使うことでレスポンスにアクセスできます。  
-resは、Net::HTTPResponseオブジェクトです。
+Require `itesttool`
 
-~~~~~ {ruby}
+```ruby
+require 'itesttool'
+```
+
+
+## GET request
+ * `_given` is setup phase. `_given` is alias of `before` in RSpec.
+ * `_when` is execution phase. it send HTTP request to server.
+ * `_then` is assertion phase. in `_then`block, HTTP response is set `res`. `res` is instance of Net::HTTPResponse.
+
+```ruby
 describe 'send GET request' do
   _given {
     headers 'referer' => 'http://local.example.com',
@@ -44,30 +55,43 @@ describe 'send GET request' do
     res.code.should eq '200'
   }
 end
-~~~~~
+```
 
-## レスポンスを検証する
-上の例にもありますが、ステータスコードは`res.code.should eq '200'`と書きます。  
-レスポンスボディは`res.body.should eq 'Hello world!'`というように書きます。
 
-レスポンスボディが、JSON、XML、HTMLの場合はそれぞれ、JSONPath、XPath、CSSセレクタを用いて要素を検証できます。  
-JSONPath、XPathについては、下のサイトを参考にしてください。  
-[http://goessner.net/articles/JsonPath/](http://goessner.net/articles/JsonPath/)
+## asser HTTP response
+assert status code:
+```ruby
+res.code.should eq '200'
+```
 
-また、配列に対する検証のために、以下のカスタムマッチャーを定義してます。  
-`all`は引数に、matcherを受け取ります。引数で受け取ったmatcherを配列の全要素に適用します。  
-`be_one_and`は引数に、matcherを受け取ります。まず配列の要素が1つであることを検証してから引数で受け取ったmatcherを要素に適用します。
-`be_sorted`は配列の要素が、昇順もしくは降順で並んでいるかを検証します。
+assert response body:
+```ruby
+res.body.should eq 'Hello world!'
+```
 
+If respons body is the JSON, XML, HTML, you can assert an element using JSONPath, XPath, CSS Selectors.  
+About JSONPath and XPath, please refer to the site: [http://goessner.net/articles/JsonPath/](http://goessner.net/articles/JsonPath/)
+
+For assert to the array, itesttool defines custom matchers.
   - `all`
   - `be_one_and`
   - `be_sorted`
 
+```ruby
+[2, 3].should all be > 1  # same next code: [2, 3].each do |x| x.should be > 1 end
+
+[2].should be_one_and be > 1     # success
+[2, 3].should be_one_and be > 1  # failure
+
+[1, 2, 3].should be_sorted :asc   # success
+[1, 2, 3].should be_sorted :desc  # failure
+[3, 2, 1].should be_sorted :desc  # success
+```
+
 
 ### JSON
-JSONPathを用いて、以下のように検証できます。  
-
-~~~~~ {ruby}
+with JSONPath:
+```ruby
 res['$.team'].should eq ['ABC']
 res['$.members..name'].should eq ['Ichiro', 'Jiro', 'Saburo']
 res['$.members..age'].should include 32
@@ -81,24 +105,26 @@ res['$.members..age'].should all be >= 12
 res['$.members..age'].should all be < 33
 res['$.members..age'].should all be <= 32
 res['$.members..age'].should be_sorted :desc
-~~~~~
+```
 
-
-同じ要素を色々検証したい場合は、`select`を使ってブロック内に検証を書くと見やすいかも。
-
-~~~~~ {ruby}
-res.select('$.members..age') do |member_ages|
-  member_ages.should all be_kind_of Integer
-  member_ages.should all be > 11
-  member_ages.should all be >= 12
-  member_ages.should all be < 33
-  member_ages.should all be <= 32
-  member_ages.should be_sorted :desc
+with `select` helper method:
+```ruby
+res.select('$.members..age') do |ages|
+  ages.should all be_kind_of Integer
+  ages.should all be > 11
+  ages.should all be >= 12
+  ages.should all be < 33
+  ages.should all be <= 32
+  ages.should be_sorted :desc
 end
-~~~~~
+```
 
-また、JSON schemaによる検証もできます。  
-json_schema/hello.js ファイルに以下のようなJSON schemaが記述します。
+you can assert with the JSON Schema.
+```ruby
+res.body.should eq_schema_of 'json_schema/hello.json'
+```
+
+json_schema/hello.js is JSON schema sample.
 
     {
       "type": "object",
@@ -117,17 +143,11 @@ json_schema/hello.js ファイルに以下のようなJSON schemaが記述しま
       }
     }
 
-`_then`ブロックに以下のように記述することで、レスポンスボディが上記のJSON schemaとマッチするかを検証できます。
-
-~~~~~ {ruby}
-res.body.should eq_schema_of 'json_schema/hello.json'
-~~~~~
 
 
 ### XML
-XPathを用いて以下のように検証できます。
-
-~~~~~ {ruby}
+with XPath:
+```ruby
 res['/root/team/text()'].should eq ['ABC']
 res['/root/members//name/text()'].should eq ['Ichiro', 'Jiro', 'Saburo']
 res['/root/members//age/text()'].should include '32'
@@ -135,19 +155,19 @@ res['/root/members/*'].should have(3).items
 res['/root/members/*'].should have_at_most(3).items
 res['/root/members/*'].should have_at_least(1).items
 res['/root/members//age/text()'].should all be > "11"
-member_ages = res['/root/members//age/text()']
-  member_ages.should all be >= "10"
-  member_ages.should all be < "33"
-  member_ages.should all be <= "32"
-  member_ages.should be_sorted :desc
+res.select('/root/members//age/text()') do |ages|
+  ages.should all be >= "10"
+  ages.should all be < "33"
+  ages.should all be <= "32"
+  ages.should be_sorted :desc
+end
 res['/root/members/member/@order'].should be_sorted :asc
-~~~~~
+```
 
 
 ### HTML
-CSSセレクタを用いて以下のように検証できます。
-
-~~~~~ {ruby}
+with CSS Selector:
+```ruby
 res['title'].should eq ['Page Title!']
 res['h1#team'].should eq ['ABC']
 res['.member dd.name'].should eq ['Ichiro', 'Jiro', 'Saburo']
@@ -156,26 +176,25 @@ res['.member'].should have(3).items
 res['.member'].should have_at_most(3).items
 res['.member'].should have_at_least(1).items
 res['.member dd.age'].should all be > "11"
-member_ages = res['.member dd.age']
-  member_ages.should all be >= 10
-  member_ages.should all be < 33
-  member_ages.should all be <= 32
-  member_ages.should be_sorted :desc
-~~~~~
+res.select('.member dd.age') do |ages|
+  ages.should all be >= 10
+  ages.should all be < 33
+  ages.should all be <= 32
+  ages.should be_sorted :desc
+end
+```
 
 
-## クエリパラメータを設定する
-クエリパラメータを設定する方法は2通りあります。  
-1つ目が、単純にurlの末尾に"?"をつけてクエリパラメータを指定する方法です。
-~~~~~ {ruby}
+## query parameter
+```ruby
 _when { get 'http://localhost:4567/index?night=true', as_text }
 _then {
   res.code.should eq '200'
 }
-~~~~~
+```
 
-2つ目が、`query`ヘルパー関数を使う方法です。
-~~~~~ {ruby}
+with `query` helper function:
+```ruby
 _when {
   get 'http://localhost:4567/index',
       as_text,
@@ -185,13 +204,11 @@ _when {
 _then {
   res.code.should eq '200'
 }
-~~~~~
+```
 
 
-## リクエストヘッダを設定する
-リクエストヘッダの設定は、`_given`ブロックで、`headers`ヘルパー関数を呼び出して設定します。  
-`headers`関数に、ハッシュを渡して設定します。
-~~~~~ {ruby}
+## HTTP request header
+```ruby
 _given {
   headers 'referer' => 'http://local.example.com',
           'user_agent' => 'itesttool'
@@ -200,17 +217,19 @@ _when { get 'http://localhost:4567/index.html', as_html }
 _then {
   res.code.should eq '200'
 }
-~~~~~
+```
 
 
-## POSTリクエストを送信する
-POSTリクエストを送信する場合、`get`の代わりに`post`を使います。  
-第1引数に送信先URL、第2引数にリクエストボディ、第３引数にレスポンスのフォーマット、を指定します。
+## POST request
+```ruby
+_when {
+  post 'http://localhost:4567/login',
+}
+```
 
-### formデータ
-リクエストボディに、formデータを設定する場合は、`body_as_form`を使用します。
-
-~~~~~ {ruby}
+### application/x-www-form-urlencoded
+use `body_as_form`:
+```ruby
 _when {
   post 'http://localhost:4567/login',
        body_as_form('nickname' => 'admin',
@@ -221,12 +240,12 @@ _then {
   res.code.should eq '200'
   res['$.nickname'].should eq ['admin']
 }
-~~~~~
+```
 
-### JSON
-リクエストボディに、JSONを設定する場合は、`body_as_json`を使用します。
 
-~~~~~ {ruby}
+### application/json
+use `body_as_json`:
+```ruby
 _when {
   post 'http://localhost:4567/echo',
        body_as_json('name' => 'Shiro',
@@ -237,11 +256,10 @@ _then {
   res.code.should eq '200'
   res.body.should eq '{"name":"Shiro","age":2}'
 }
-~~~~~
+```
 
-単純に、`body`を使って直接文字列で設定することもできます。
-
-~~~~~ {ruby}
+use string:
+```ruby
 _when {
   post 'http://localhost:4567/echo',
        body('{"name":"Shiro","age":2}'),
@@ -251,11 +269,11 @@ _then {
   res.code.should eq '200'
   res.body.should eq '{"name":"Shiro","age":2}'
 }
-~~~~~
+```
 
-## PUT, DELETEリクエスト
-PUT, DELETEリクエストの場合は、`post`の代わりに`put`,`delete`を使ってください。  
-後は`post`の場合といっしょです。
+
+## PUT, DELETE request
+same as a `post`. instead of use `put`, or `delete`.
 
 
 # License
