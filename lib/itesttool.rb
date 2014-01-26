@@ -1,18 +1,18 @@
 # coding: utf-8
+require 'rubygems'
+require 'net/http'
+require 'uri'
+require 'json'
+require 'jsonpath'
+require 'nokogiri'
+require "itesttool/version"
+require "itesttool/custom_matchers"
+
 def _given(&b) before(:each, &b) end
 def _when(&b) let(:res, &b) end
 def _then(&b) it(&b) end
 
 module ItestHelpers
-  $:.unshift File.dirname(__FILE__)
-  require 'custom_matchers'
-  require 'rubygems'
-  require 'net/http'
-  require 'uri'
-  require 'json'
-  require 'jsonpath'
-  require 'nokogiri'
-  require 'yaml'
 
   def as_text() "text" end
   def as_json() "json" end
