@@ -1,4 +1,7 @@
 # itesttool
+
+[![Build Status](https://travis-ci.org/bati11/itesttool.png?branch=master)](https://travis-ci.org/bati11/itesttool)
+
 WebアプリケーションのEnd-to-Endのテストを自動化するためのツール。  
 RSpecにユーティリティを追加して実現してます。
 
