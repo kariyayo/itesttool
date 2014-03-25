@@ -58,7 +58,7 @@ end
 ```
 
 
-## asser HTTP response
+## assert HTTP response
 assert status code:
 ```ruby
 res.code.should eq '200'
