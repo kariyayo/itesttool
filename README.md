@@ -48,7 +48,7 @@ require 'itesttool'
 ```ruby
 describe 'send GET request' do
   _given {
-    headers 'referer' => 'http://local.example.com',
+    headers 'referer' => 'http://local.example.com'
   }
   _when { get 'http://localhost:4567/index' }
   _then {
