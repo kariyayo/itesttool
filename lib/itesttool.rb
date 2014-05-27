@@ -139,10 +139,7 @@ private
   module_function :get, :post, :add_headers, :decorate_response, :execute_request
 end
 
-
 RSpec.configure do |c|
     c.include ItestHelpers
 end
-
-
 
