@@ -41,61 +41,41 @@ module ItestHelpers
     {:json => data}
   end
 
+
   def get(url, res_format="text", query="")
     url_obj = URI.parse(url)
-    res = Net::HTTP.start(url_obj.host, url_obj.port) {|http|
-      queries = []
-      queries.push(query) unless query.empty?
-      queries.push(url_obj.query) unless url_obj.query.nil?
-      path_with_query =
-        if queries.empty?
-          url_obj.path
-        else
-          url_obj.path + "?" + queries.join("&")
-        end
-      request = Net::HTTP::Get.new(path_with_query)
-      add_headers(request)
-      http.request(request)
-    }
+    queries = []
+    queries.push(query) unless query.empty?
+    queries.push(url_obj.query) unless url_obj.query.nil?
+    path_with_query =
+      if queries.empty?
+        url_obj.path
+      else
+        url_obj.path + "?" + queries.join("&")
+      end
+    res = execute_request(url_obj, nil){Net::HTTP::Get.new(path_with_query)}
     decorate_response(res, "GET", url, res_format)
   end
 
   def post(url, data, res_format)
     url_obj = URI.parse(url)
-    res = Net::HTTP.start(url_obj.host, url_obj.port) {|http|
-      request = Net::HTTP::Post.new(url_obj.path)
-      setup(request, data)
-      http.request(request)
-    }
+    res = execute_request(url_obj, data){Net::HTTP::Post.new(url_obj.path)}
     decorate_response(res, "POST", url, res_format)
   end
 
   def put(url, data, res_format)
     url_obj = URI.parse(url)
-    res = Net::HTTP.start(url_obj.host, url_obj.port) {|http|
-      request = Net::HTTP::Put.new(url_obj.path)
-      setup(request, data)
-      http.request(request)
-    }
+    res = execute_request(url_obj, data){Net::HTTP::Put.new(url_obj.path)}
     decorate_response(res, "PUT", url, res_format)
   end
 
   def delete(url, data, res_format)
     url_obj = URI.parse(url)
-    res = Net::HTTP.start(url_obj.host, url_obj.port) {|http|
-      request = Net::HTTP::DELETE.new(url_obj.path)
-      setup(request, data)
-      http.request(request)
-    }
+    res = execute_request(url_obj, data){Net::HTTP::DELETE.new(url_obj.path)}
     decorate_response(res, "DELETE", url, res_format)
   end
 
 private
-  def setup(request, data)
-    set_body(request, data)
-    add_headers(request)
-  end
-
   def add_headers(request)
     if @headers then @headers.each{|k, v| request.add_field k, v} end
   end
@@ -147,7 +127,16 @@ private
     res
   end
 
-  module_function :get, :post, :add_headers, :decorate_response
+  def execute_request(url_obj, data, &block)
+    Net::HTTP.start(url_obj.host, url_obj.port, :use_ssl => /https/ === url_obj.scheme) {|http|
+      request = block.call
+      set_body(request, data) unless data.nil?
+      add_headers(request)
+      http.request(request)
+    }
+  end
+
+  module_function :get, :post, :add_headers, :decorate_response, :execute_request
 end
 
 RSpec.configure do |c|
