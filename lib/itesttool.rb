@@ -14,7 +14,7 @@ def _given(&b) before(:each, &b) end
 def _when(&b) let(:res, &b) end
 def _then(&b) it(&b) end
 
-module ItestHelpers
+module Itesttool
 
   def as_text() "text" end
   def as_json() "json" end
@@ -150,6 +150,6 @@ private
 end
 
 RSpec.configure do |c|
-    c.include ItestHelpers
+    c.include Itesttool
 end
 
