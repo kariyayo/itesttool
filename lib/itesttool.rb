@@ -8,6 +8,8 @@ require 'nokogiri'
 require "itesttool/version"
 require "itesttool/custom_matchers"
 
+def feature(s, &b) describe(s, &b) end
+def scenario(s, &b) describe(s, &b) end
 def _given(&b) before(:each, &b) end
 def _when(&b) let(:res, &b) end
 def _then(&b) it(&b) end
