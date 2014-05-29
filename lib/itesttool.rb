@@ -30,7 +30,15 @@ module ItestHelpers
   end
 
   def query(h = {})
-     h.map{ |k, v| URI.encode(k) + "=" + URI.encode(v.to_s) }.join("&")
+    q = []
+    h.each do |k, v|
+      if v.is_a? Array
+        q.concat( v.map { | p | URI.encode(k.to_s) + "=" + URI.encode(p.to_s) } )
+      else
+        q << URI.encode(k.to_s) + "=" + URI.encode(v.to_s)
+      end
+    end
+    q.join("&")
   end
 
   def body(data = "")
